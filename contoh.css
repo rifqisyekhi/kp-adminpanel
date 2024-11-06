@@ -1,0 +1,145 @@
+/* Reset and basic styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    color: #333;
+    background-color: #f9f9f9;
+}
+
+/* Header date and time */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+}
+
+.date-time, .title {
+    font-size: 1.5em;
+    font-weight: bold;
+}
+
+/* Meeting information section */
+.meeting-info {
+    background-color: #2E336F;
+    color: white;
+    padding: 20px;
+    margin: 20px;
+    border-radius: 8px;
+}
+
+.meeting-info h2 {
+    font-size: 1.3em;
+    margin-bottom: 10px;
+}
+
+.meeting-details {
+    display: flex;
+    justify-content: space-between;
+    font-size: 1em;
+}
+
+/* Upcoming meetings buttons */
+.upcoming-meetings {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin: 20px;
+}
+
+.meeting-button {
+    background-color: #2E336F;
+    color: white;
+    padding: 10px;
+    text-align: center;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1em;
+}
+
+/* Video section */
+.video-section {
+    margin: 20px;
+    display: flex;
+    justify-content: center;
+}
+
+.video-frame {
+    width: 100%;
+    max-width: 600px;
+    height: 300px;
+    background-color: #000;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5em;
+}
+
+/* Upcoming label */
+.upcoming-label {
+    background-color: #F4C100;
+    color: black;
+    padding: 10px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 1.2em;
+    margin: 20px;
+    border-radius: 8px;
+}
+
+/* Marquee container with logo */
+.marquee-container {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    background-color: #F4C100;
+    padding: 10px;
+    overflow: hidden;
+    font-size: 1.1em;
+}
+
+.marquee-logo {
+    width: 50px;
+    height: auto;
+}
+
+.marquee {
+    display: inline-block;
+    white-space: nowrap;
+    animation: marquee 15s linear infinite;
+}
+
+/* Running text animation */
+@keyframes marquee {
+    0% { transform: translateX(100%); }
+    100% { transform: translateX(-100%); }
+}
+
+/* Footer with social icons */
+.footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    padding: 20px;
+    font-size: 1.2em;
+}
+
+.footer img {
+    width: 30px;
+    height: 30px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .meeting-details {
+        flex-direction: column;
+        gap: 10px;
+    }
+}

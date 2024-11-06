@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet"> 
+    <title>Schedule Page</title>
+    <link rel="stylesheet" href="../assets/css/input-meeting.css">
+    <link rel="shortcut icon" type="image/x-icon" href="../assets/images/logopupr.png" />
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <img src="../assets/images/Logo bplj.png" alt="Logo" class="logo">
+            <h2>JADWAL RAPAT</h2>
+            <nav class="menu">
+                <a href="./dashboard.html" class="menu-item active">
+                    <span>🏠</span> Dashboard
+                </a>
+                <a href="../pages/input-meeting.html" class="menu-item">
+                    <span>📅</span> Input Meeting
+                </a>
+                <a href="#" class="menu-item">
+                    <span>📆</span> Schedule
+                </a>
+            </nav>
+            <div class="illustration">
+                <img src="../assets/images/ilustrasi kalender.png" alt="Illustration">
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <h1>Input Meeting</h1>
+            <form class="meeting-form">
+                <!-- Judul Rapat -->
+                <label for="meeting-title">Judul Rapat</label>
+                <input type="text" id="meeting-title" placeholder="Rapat Kabinet">
+
+                <!-- Tempat -->
+                <label for="location">Tempat</label>
+                <select id="location">
+                    <option value="" disabled selected>Pilih Tempat</option>
+                    <option value="Conference Room A">Conference Room A</option>
+                    <option value="Conference Room B">Conference Room B</option>
+                    <option value="Online">Online</option>
+                    <option value="Main Hall">Main Hall</option>
+                </select>
+                
+                <!-- Audiens -->
+                <label for="audience">Audiens</label>
+                <select id="audience">
+                    <option value="" disabled selected>Pilih Audiens</option>
+                    <option value="Public">Public</option>
+                    <option value="Private">Private</option>
+                    <option value="Internal Staff">Internal Staff</option>
+                    <option value="VIP">VIP</option>
+                </select>
+
+                <!-- Tanggal -->
+                <label for="date">Tanggal</label>
+                <input type="date" id="date">
+
+                <!-- Start Time & End Time -->
+                <div class="time-group">
+                    <label>Start Time</label>
+                    <input type="time" id="start-time" placeholder="10:00 AM">
+                    <label>End Time</label>
+                    <input type="time" id="end-time" placeholder="12:00 PM">
+                </div>
+
+                <!-- Keterangan -->
+                <label for="description">Keterangan</label>
+                <textarea id="description" placeholder="Tell us about your use case..."></textarea>
+
+                <!-- Submit Button -->
+                <button type="submit" class="submit-button">Submit ➔</button>
+            </form>
+        </main>
+    </div>
+</body>
+</html>
