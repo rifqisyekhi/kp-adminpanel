@@ -1,0 +1,143 @@
+/* Basic Reset */
+.im-all {
+    margin: 0;
+    padding: 0;
+    font-family: Poppins;
+    width: 100%;
+}
+
+/* Container */
+.im-container {
+    display: flex;
+    min-height: 100vh;
+    gap: 20px;
+    padding: 0;
+    margin: 0;
+    width: 100vw;
+}
+
+/* Sidebar */
+.im-sidebar {
+    background-color: #ffffff;
+    padding: 20px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    width: 25%;
+}
+
+.im-center{
+    display: flex;
+    justify-content: center;
+}
+
+.im-logo {
+    width: 80px;
+    height: auto;
+    margin-bottom: 10px;
+}
+
+.im-sidebar h2 {
+    color: #1b1e34;
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 30px;
+}
+
+.im-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.im-menu-item {
+    font-size: 16px;
+    color: #1b1e34;
+    text-decoration: none;
+    padding: 10px;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+    text-align: left;
+}
+
+.im-menu-item:hover,
+.im-menu-item.active {
+    background-color: #e0e0e0;
+}
+
+.im-illustration{
+    display: flex;
+    justify-content: center;
+}
+
+.im-illustration img {
+    width: 60%;
+    margin-top: 130px;
+}
+
+.im-main-content{
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    justify-content: left;
+}
+
+.im-main-content h1 {
+    font-size: 28px;
+    color: #1b1e34;
+    margin-bottom: 20px;
+}
+
+.im-meeting-form {
+    max-width: 500px;
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.im-meeting-form label {
+    display: block;
+    font-size: 16px;
+    color: #1b1e34;
+    margin-bottom: 5px;
+}
+
+.im-meeting-form input[type="text"],
+.im-meeting-form input[type="date"],
+.im-meeting-form input[type="time"],
+.im-meeting-form select,
+.im-meeting-form textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.im-time-group {
+    display: flex;
+    gap: 10px;
+}
+
+.im-meeting-form textarea {
+    height: 100px;
+    resize: none;
+}
+
+.im-submit-button {
+    width: 100%;
+    padding: 15px;
+    background-color: #1b1e34;
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.im-submit-button:hover {
+    background-color: #333;
+}

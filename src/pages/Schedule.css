@@ -1,0 +1,138 @@
+/* Basic Reset */
+.sch-all {
+    margin: 0;
+    padding: 0;
+    font-family: Poppins;
+    width: 100%;
+}
+
+/* Container */
+.sch-container {
+    display: flex;
+    min-height: 100vh;
+    gap: 20px;
+    padding: 0;
+    margin: 0;
+    width: 100vw;
+}
+
+/* Sidebar */
+.sch-sidebar {
+    background-color: #ffffff;
+    padding: 20px;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    width: 25%;
+}
+
+.sch-center{
+    display: flex;
+    justify-content: center;
+}
+
+.sch-logo {
+    width: 80px;
+    height: auto;
+    margin-bottom: 10px;
+}
+
+.sch-sidebar h2 {
+    color: #1b1e34;
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 30px;
+}
+
+.sch-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.sch-menu-item {
+    font-size: 16px;
+    color: #1b1e34;
+    text-decoration: none;
+    padding: 10px;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+    text-align: left;
+}
+
+.sch-menu-item:hover,
+.sch-menu-item.active {
+    background-color: #e0e0e0;
+}
+
+.sch-illustration{
+    display: flex;
+    justify-content: center;
+}
+
+.sch-illustration img {
+    width: 60%;
+    margin-top: 130px;
+}
+
+.sch-main-content{
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    justify-content: left;
+    width: 75%;
+}
+
+.sch-main-content h1 {
+    font-size: 28px;
+    color: #1b1e34;
+    margin-bottom: 20px;
+}
+
+.sch-meeting-info {
+    width: 45%;
+}
+
+.sch-meeting-card {
+    background-color: #232E57;
+    color: #fff;
+    padding: 20px;
+    margin-bottom: 10px;
+}
+
+.sch-meeting-card h2 {
+    font-size: 1.5em;
+}
+
+.sch-meeting-card .status {
+    display: flex;
+    align-items: center;
+    margin: 10px 0;
+}
+
+.sch-meeting-card .status .dot {
+    height: 10px;
+    width: 10px;
+    background-color: #28a745;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.sch-meeting-card .details p {
+    margin: 5px 0;
+}
+
+.sch-upcoming {
+    margin-top: 20px;
+}
+
+.sch-upcoming-btn {
+    display: block;
+    width: 100%;
+    background-color: #232E57;
+    color: #fff;
+    padding: 10px;
+    margin: 5px 0;
+    border: none;
+    border-radius: 5px;
+    text-align: left;
+}

@@ -1,0 +1,73 @@
+/* Basic Reset */
+/* Body Styling */
+.body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #ffffff;
+}
+
+/* Dashboard Container */
+.dashboard {
+    text-align: center;
+}
+
+/* Logo Styling */
+.logo {
+    font-size: 48px;
+    font-weight: bold;
+    color: #1b1e34;
+    margin-bottom: 10px;
+}
+
+/* Welcome Text */
+.welcome-text {
+    font-size: 24px;
+    color: #1b1e34;
+    margin-bottom: 30px;
+}
+
+/* Button Container */
+.buttons {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+/* Button Styling */
+.button {
+    background-color: #F8B400;
+    color: white;
+    font-size: 18px;
+    padding: 15px 30px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Icon Style in Button */
+.button .icon {
+    font-size: 20px;
+}
+
+/* Sign Out Button */
+.sign-out {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    background-color: #1b1e34;
+    color: white;
+    font-size: 14px;
+    padding: 10px 20px;
+    border-radius: 8px;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
