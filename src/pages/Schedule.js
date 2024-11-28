@@ -1,81 +1,106 @@
 import React, { useEffect, useState } from 'react';
-import './Schedule.css'; // Include the path to your CSS
+import './Schedule.css'; // Path CSS
 import logo from '../assets/images/Logo_bplj.png';
 import illustration from '../assets/images/ilustrasi_kalender.png';
-import axios from 'axios';
 
 function Schedule() {
   const [meetings, setMeetings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  function formatDate(dateStr) {
-    const date = new Date(dateStr);
-  
-    // Get the day, month, and year
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-indexed
-    const year = date.getFullYear();
-  
-    // Format as dd-mm-yyyy
-    return `${day}-${month}-${year}`;
-  }
+  // Fungsi untuk menghapus meeting
+  const handleDelete = async (id) => {
+    if (window.confirm('Are you sure you want to delete this meeting?')) {
+      try {
+        const response = await fetch(`http://localhost:5000/meetings/${id}`, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          },
+        });
 
-  // Fetch meetings data when component mounts
+        if (response.ok) {
+          // Hapus dari state jika berhasil dihapus dari backend
+          setMeetings(meetings.filter((meeting) => meeting._id !== id));
+          alert('Meeting successfully deleted.');
+        } else {
+          alert('Failed to delete the meeting. Please try again.');
+        }
+      } catch (err) {
+        console.error('Error deleting meeting:', err);
+        alert('An error occurred while deleting the meeting.');
+      }
+    }
+  };
+
+  // Fetch data rapat dari API
   useEffect(() => {
     const fetchMeetings = async () => {
       try {
-        // Retrieve the token from localStorage or sessionStorage (based on where you store it)
-        const token = localStorage.getItem('token'); // or sessionStorage.getItem('token');
-    
-        // Make the GET request with Bearer token in the headers
-        const response = await axios.get('http://localhost:5000/meetings', {
+        const response = await fetch('http://localhost:5000/meetings', {
+          method: 'GET',
           headers: {
-            'Authorization': `Bearer ${token}`, // Adding Bearer token
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
           },
         });
-    
-        setMeetings(response.data);  // Set meetings data
+
+        if (response.ok) {
+          const result = await response.json();
+          setMeetings(result);
+        } else {
+          const error = await response.json();
+          console.log('Failed to fetch meetings:', error.message);
+          setError('Failed to fetch meetings');
+        }
         setLoading(false);
       } catch (err) {
-        console.log(err);
+        console.error('Error fetching meetings:', err);
         setError('Failed to fetch meetings');
         setLoading(false);
       }
     };
-    
 
     fetchMeetings();
-  }, []); // Empty dependency array to run this only once after the first render
+  }, []);
 
-  // Handle loading state
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>{error}</div>;
 
-  // Handle error state
-  if (error) {
-    return <div>{error}</div>;
-  }
+  // Fungsi untuk memfilter rapat
+  const filterMeetings = (type) => {
+    const today = new Date();
+    const offset = 7 * 60 * 60 * 1000; // GMT+7 offset
+    const gmt7Today = new Date(today.getTime() + offset);
+    gmt7Today.setUTCHours(0, 0, 0, 0);
+
+    if (type === 'today') {
+      return meetings.filter((meeting) => {
+        const meetingDate = new Date(meeting.tanggal);
+        return meetingDate.toISOString().slice(0, 10) === gmt7Today.toISOString().slice(0, 10);
+      });
+    } else if (type === 'upcoming') {
+      return meetings.filter((meeting) => {
+        const meetingDate = new Date(meeting.tanggal);
+        return meetingDate > gmt7Today;
+      });
+    }
+    return [];
+  };
 
   return (
-    <div className='sch-all'>
+    <div className="sch-all">
       <div className="sch-container">
         <aside className="sch-sidebar">
-          <div className='sch-center'>
+          <div className="sch-center">
             <img src={logo} alt="Logo" className="sch-logo" />
           </div>
           <h2>JADWAL RAPAT</h2>
           <nav className="sch-menu">
-            <a href="/dashboard" className="sch-menu-item">
-              🏠 Dashboard
-            </a>
-            <a href="/input-meeting" className="sch-menu-item">
-              📅 Input Meeting
-            </a>
-            <a href="#" className="sch-menu-item active">
-              📆 Schedule
-            </a>
+            <a href="/dashboard" className="sch-menu-item">🏠 Dashboard</a>
+            <a href="/input-meeting" className="sch-menu-item">📅 Input Meeting</a>
+            <a href="#" className="sch-menu-item active">📆 Schedule</a>
           </nav>
           <div className="sch-illustration">
             <img src={illustration} alt="Illustration" />
@@ -84,37 +109,65 @@ function Schedule() {
 
         <main className="sch-main-content">
           <h1>Schedule</h1>
+          {meetings.length > 0 ? (
+            <section className="sch-meeting-info">
+              {/* Rapat Hari Ini */}
+              <div className="sch-today">
+                <h2>RAPAT HARI INI</h2>
+                {filterMeetings('today').map((meeting) => (
+                  <div key={meeting._id} className="sch-meeting-card">
+                    <p>{meeting.judul}</p>
+                    <div className="sch-status">
+                      <span className="sch-dot"></span> {meeting.status || 'Sedang Berlangsung'}
+                    </div>
+                    <div className="sch-details">
+                      <p><strong>Waktu:</strong> {meeting.start_time} - {meeting.end_time}</p>
+                      <p><strong>Tempat:</strong> {meeting.tempat}</p>
+                      <p><strong>Audience:</strong> {meeting.audiens}</p>
+                    </div>
+                    <button
+                      className="sch-delete-btn"
+                      onClick={() => handleDelete(meeting._id)}
+                    >
+                      Delete
+                    </button>
+                  </div>
+                ))}
+              </div>
 
-          <section className="sch-meeting-info">
-  {/* Ensure meetings data is available */}
-  {meetings && meetings.length > 0 ? (
-    meetings.map((meeting, index) => (
-      <div key={index} className="sch-meeting-card">
-        <h2>RAPAT {formatDate(meeting.tanggal)}</h2>
-        {/* Display meeting title or fallback if not available */}
-        <p>{meeting.judul || 'No Title'}</p>
-        <div className="sch-status">
-          <span className="sch-dot"></span>
-          {/* Display status or fallback */}
-          {meeting.status || 'Sedang Berlangsung'}
-        </div>
-        <div className="sch-details">
-          {/* Display start_time and end_time, fallback if not available */}
-          <p>
-            <strong>Waktu:</strong> {meeting.start_time || 'No time available'} - {meeting.end_time || 'No time available'}
-          </p>
-          {/* Display place (tempat), fallback if not available */}
-          <p><strong>Tempat:</strong> {meeting.tempat || 'No location available'}</p>
-          {/* Display audience (audiens), fallback if not available */}
-          <p><strong>Audience:</strong> {meeting.audiens || 'No audience available'}</p>
-        </div>
-      </div>
-    ))
-  ) : (
-    <p>No meetings available.</p>
-  )}
-</section>
+              {/* Rapat Mendatang */}
+              <div className="sch-upcoming">
+                <h2>RAPAT MENDATANG</h2>
+                {filterMeetings('upcoming').map((meeting) => {
+                  const formattedDate = new Intl.DateTimeFormat('id-ID', {
+                    timeZone: 'Asia/Bangkok',
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                  }).format(new Date(meeting.tanggal));
 
+                  return (
+                    <div key={meeting._id} className="sch-meeting-card">
+                      <p>{meeting.judul}</p>
+                      <div className="sch-details">
+                        <p><strong>Tanggal:</strong> {formattedDate}</p>
+                        <p><strong>Waktu:</strong> {meeting.start_time} - {meeting.end_time}</p>
+                        <p><strong>Tempat:</strong> {meeting.tempat}</p>
+                      </div>
+                      <button
+                        className="sch-delete-btn"
+                        onClick={() => handleDelete(meeting._id)}
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  );
+                })}
+              </div>
+            </section>
+          ) : (
+            <p>No meetings scheduled.</p>
+          )}
         </main>
       </div>
     </div>

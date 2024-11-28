@@ -18,8 +18,10 @@ header {
 }
 
 .date-time p {
-    font-size: 1.2em;
+    font-size: 1.5em;
     color: #232E57;
+    font-weight: bold;
+
 }
 
 .title h1 {
@@ -29,7 +31,9 @@ header {
 
 .title h2 {
     font-size: 1em;
-    color: #7f8c8d;
+    font-weight: 400;
+    text-align: end;
+    color: #232E57;
 }
 
 main {
@@ -127,6 +131,17 @@ footer {
     align-items: center;
 }
 
+.footer-logo {
+    position: absolute;
+    bottom: 10px; /* Jarak dari bawah */
+    left: 70px;   /* Jarak dari kiri */
+  }
+  
+.footer-logo img {
+    width: 120px; /* Atur ukuran logo */
+    height: auto;
+  }
+
 .footer-text p {
     color: #232E57;
     font-weight: bold;
@@ -135,6 +150,10 @@ footer {
 .social-media {
     text-align: right;
     display: flex;
+    position: absolute;
+    bottom: 10px;
+    right: 65px;
+
 }
 
 .social-media p {

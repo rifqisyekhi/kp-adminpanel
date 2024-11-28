@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import './InputMeeting.css'; // Include the path to your CSS
 import logo from '../assets/images/Logo_bplj.png';
 import illustration from '../assets/images/ilustrasi_kalender.png';
@@ -11,45 +11,46 @@ function InputMeeting() {
   const [startTime, setStartTime] = useState('');
   const [endTime, setEndTime] = useState('');
   const [description, setDescription] = useState('');
-  const [rooms, setRooms] = useState([]);  // State to store room data
+  const [rooms, setRooms] = useState([]);
 
-  // Fetch rooms from the server when the component mounts
   useEffect(() => {
     const fetchRooms = async () => {
       try {
         const response = await fetch('http://localhost:5000/rooms', {
           method: 'GET',
           headers: {
-            'Authorization': `Bearer ${localStorage.getItem('token')}`,  // Ensure token is passed
-          },
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`, // Add token if needed for authentication
+          }
         });
 
         if (response.ok) {
-          const data = await response.json();
-          setRooms(data);  // Store rooms in state
+          const result = await response.json();
+          setRooms(result);
         } else {
-          alert('Failed to fetch rooms');
+          const error = await response.json();
+          console.log('Failed to fetch rooms: ' + error.message);
         }
       } catch (error) {
-        console.error('Error fetching rooms:', error);
-        alert('Error fetching rooms');
+        console.error('Error creating meeting:', error);
+        console.log('An error occurred while fetch the room.');
       }
     };
 
     fetchRooms();
-  }, []);  // Run once on component mount
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     const newMeeting = {
-      judul: meetingTitle,
-      tanggal: date,
-      tempat: location,
-      audiens: audience,
-      start_time: startTime,
-      end_time: endTime,
-      keterangan: description
+      judul : meetingTitle,
+      tanggal : date,
+      tempat : location,
+      audiens : audience,
+      start_time : startTime,
+      end_time : endTime,
+      keterangan : description
     };
 
     try {
@@ -65,11 +66,11 @@ function InputMeeting() {
       if (response.ok) {
         const result = await response.json();
         alert('Meeting created successfully');
+        window.location.href = "/schedule";
         // Redirect to a different page or reset the form if needed
       } else {
         const error = await response.json();
         alert('Failed to create meeting: ' + error.message);
-        window.location.href="/schedule";
       }
     } catch (error) {
       console.error('Error creating meeting:', error);
@@ -121,11 +122,11 @@ function InputMeeting() {
               onChange={(e) => setLocation(e.target.value)}
             >
               <option value="" disabled>Pilih Tempat</option>
-              {rooms.length > 0 && rooms.map((room) => (
-                <option key={room._id} value={room.name}>
-                  {room.name} ({room.capacity} people) - {room.location_type}
-                </option>
-              ))}
+              {
+                rooms.map((data, index) => {
+                  return <option key={index} value={data.name}>{data.name}</option> 
+                })
+              }
             </select>
 
             <label>Audiens</label>

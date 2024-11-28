@@ -5,7 +5,6 @@ import InputMeeting from './pages/InputMeeting';
 import Lobby from './pages/Lobby';
 import Login from './pages/Login';
 import Schedule from './pages/Schedule';
-import Logo from './assets/images/logopupr.png';
 
 function App() {
   return (
