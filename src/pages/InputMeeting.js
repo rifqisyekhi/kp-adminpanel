@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import './InputMeeting.css'; // Include the path to your CSS
-import logo from '../assets/images/Logo_bplj.png';
-import illustration from '../assets/images/ilustrasi_kalender.png';
+import './InputMeeting.css';
+import Sidebar from '../components/Sidebar';
 
 function InputMeeting() {
   const [location, setLocation] = useState('');
@@ -12,16 +11,18 @@ function InputMeeting() {
   const [endTime, setEndTime] = useState('');
   const [description, setDescription] = useState('');
   const [rooms, setRooms] = useState([]);
+  const [audiences, setAudiences] = useState([]); // State untuk daftar audiens
 
   useEffect(() => {
+    // Fetch daftar rooms
     const fetchRooms = async () => {
       try {
         const response = await fetch('http://localhost:5000/rooms', {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('token')}`, // Add token if needed for authentication
-          }
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
         });
 
         if (response.ok) {
@@ -29,28 +30,51 @@ function InputMeeting() {
           setRooms(result);
         } else {
           const error = await response.json();
-          console.log('Failed to fetch rooms: ' + error.message);
+          console.error('Failed to fetch rooms: ' + error.message);
         }
       } catch (error) {
-        console.error('Error creating meeting:', error);
-        console.log('An error occurred while fetch the room.');
+        console.error('Error fetching rooms:', error);
+      }
+    };
+
+    // Fetch daftar audiens
+    const fetchAudiences = async () => {
+      try {
+        const response = await fetch('http://localhost:5000/audiences', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+        });
+
+        if (response.ok) {
+          const result = await response.json();
+          setAudiences(result);
+        } else {
+          const error = await response.json();
+          console.error('Failed to fetch audiences: ' + error.message);
+        }
+      } catch (error) {
+        console.error('Error fetching audiences:', error);
       }
     };
 
     fetchRooms();
+    fetchAudiences();
   }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     const newMeeting = {
-      judul : meetingTitle,
-      tanggal : date,
-      tempat : location,
-      audiens : audience,
-      start_time : startTime,
-      end_time : endTime,
-      keterangan : description
+      judul: meetingTitle,
+      tanggal: date,
+      tempat: location,
+      audiens: audience,
+      start_time: startTime,
+      end_time: endTime,
+      keterangan: description,
     };
 
     try {
@@ -58,16 +82,15 @@ function InputMeeting() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`, // Add token if needed for authentication
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
-        body: JSON.stringify(newMeeting)
+        body: JSON.stringify(newMeeting),
       });
 
       if (response.ok) {
         const result = await response.json();
         alert('Meeting created successfully');
-        window.location.href = "/schedule";
-        // Redirect to a different page or reset the form if needed
+        window.location.href = '/schedule';
       } else {
         const error = await response.json();
         alert('Failed to create meeting: ' + error.message);
@@ -79,22 +102,9 @@ function InputMeeting() {
   };
 
   return (
-    <div className='im-all'>
+    <div className="im-all">
       <div className="im-container">
-        <aside className="im-sidebar">
-          <div className='im-center'>
-            <img src={logo} alt="Logo" className="im-logo" />
-          </div>
-          <h2>JADWAL RAPAT</h2>
-          <nav className="im-menu">
-            <a href="/dashboard" className="im-menu-item">🏠 Dashboard</a>
-            <a href="/input-meeting" className="im-menu-item active">📅 Input Meeting</a>
-            <a href="/schedule" className="im-menu-item">📆 Schedule</a>
-          </nav>
-          <div className="im-illustration">
-            <img src={illustration} alt="Illustration" />
-          </div>
-        </aside>
+        <Sidebar activePage="input-meeting" />
 
         <main className="im-main-content">
           <h1>Input Meeting</h1>
@@ -121,12 +131,14 @@ function InputMeeting() {
               value={location}
               onChange={(e) => setLocation(e.target.value)}
             >
-              <option value="" disabled>Pilih Tempat</option>
-              {
-                rooms.map((data, index) => {
-                  return <option key={index} value={data.name}>{data.name}</option> 
-                })
-              }
+              <option value="" disabled>
+                Pilih Tempat
+              </option>
+              {rooms.map((data, index) => (
+                <option key={index} value={data.name}>
+                  {data.name}
+                </option>
+              ))}
             </select>
 
             <label>Audiens</label>
@@ -134,11 +146,14 @@ function InputMeeting() {
               value={audience}
               onChange={(e) => setAudience(e.target.value)}
             >
-              <option value="" disabled>Pilih Audiens</option>
-              <option value="Public">Public</option>
-              <option value="Private">Private</option>
-              <option value="Internal Staff">Internal Staff</option>
-              <option value="VIP">VIP</option>
+              <option value="" disabled>
+                Pilih Audiens
+              </option>
+              {audiences.map((data, index) => (
+                <option key={index} value={data.name}>
+                  {data.name}
+                </option>
+              ))}
             </select>
 
             <div className="im-time-group">
@@ -164,9 +179,11 @@ function InputMeeting() {
               placeholder="Tell us about your use case..."
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-            />
+            ></textarea>
 
-            <button type="submit" className="im-submit-button">Submit ➔</button>
+            <button type="submit" className="im-submit-button">
+              Submit ➔
+            </button>
           </form>
         </main>
       </div>

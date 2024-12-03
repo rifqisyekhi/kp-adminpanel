@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import axios from 'axios'; // Ensure axios is installed with `npm install axios`
+import axios from 'axios';
 import "./Login.css";
 import logo from '../assets/images/Logo_bplj.png';
-import { useNavigate } from 'react-router-dom'; // For navigation after login
+import { useNavigate } from 'react-router-dom';
+import illustration1 from '../assets/images/Ilustrasi.png';
 
 export default function Login() {
   const [username, setUsername] = useState('');
@@ -64,12 +65,12 @@ export default function Login() {
             </button>
           </form>
           <br/>
-          <div className="login-options">
-            <a href="#" className="login-forgot-password">Forgot Password?</a>
-          </div>
-          <p className="login-signup-text">I don't have an account? <a href="#">Sign up</a></p>
         </div>
+        <div className="login-illustration">
+            <img src={illustration1} alt="Illustration" />
+          </div>
       </div>
     </div>
+    
   );
 }

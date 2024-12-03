@@ -11,8 +11,6 @@
     display: flex;
     min-height: 100vh;
     gap: 20px;
-    padding: 0;
-    margin: 0;
     width: 100vw;
 }
 
@@ -25,56 +23,7 @@
     width: 25%;
 }
 
-.sch-center{
-    display: flex;
-    justify-content: center;
-}
-
-.sch-logo {
-    width: 80px;
-    height: auto;
-    margin-bottom: 10px;
-}
-
-.sch-sidebar h2 {
-    color: #1b1e34;
-    font-size: 20px;
-    font-weight: bold;
-    margin-bottom: 30px;
-}
-
-.sch-menu {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-}
-
-.sch-menu-item {
-    font-size: 16px;
-    color: #1b1e34;
-    text-decoration: none;
-    padding: 10px;
-    border-radius: 5px;
-    transition: background-color 0.3s;
-    text-align: left;
-}
-
-.sch-menu-item:hover,
-.sch-menu-item.active {
-    background-color: #e0e0e0;
-}
-
-.sch-illustration{
-    display: flex;
-    justify-content: center;
-}
-
-.sch-illustration img {
-    width: 60%;
-    margin-top: 130px;
-}
-
-.sch-main-content{
+.sch-main-content {
     display: flex;
     flex-direction: column;
     padding: 10px;
@@ -88,6 +37,7 @@
     margin-bottom: 20px;
 }
 
+/* Meeting Cards */
 .sch-meeting-info {
     width: 45%;
 }
@@ -98,10 +48,6 @@
     padding: 20px;
     margin-bottom: 10px;
     border-radius: 10px;
-}
-
-.sch-meeting-card h2 {
-    font-size: 1.5em;
 }
 
 .sch-meeting-card .status {
@@ -122,22 +68,7 @@
     margin: 5px 0;
 }
 
-.sch-upcoming {
-    margin-top: 20px;
-}
-
-.sch-upcoming-btn {
-    display: block;
-    width: 100%;
-    background-color: #232E57;
-    color: #fff;
-    padding: 10px;
-    margin: 5px 0;
-    border: none;
-    border-radius: 5px;
-    text-align: left;
-}
-
+/* Buttons */
 .sch-delete-btn {
     margin-top: 10px;
     padding: 5px 10px;
@@ -151,4 +82,9 @@
   
 .sch-delete-btn:hover {
     background-color: red;
+}
+
+/* No meetings message */
+.sch-today, .sch-upcoming {
+    margin-top: 20px;
 }

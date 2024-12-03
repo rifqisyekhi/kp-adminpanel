@@ -10,9 +10,10 @@
 .login-container {
     width: 100%;
     max-width: 400px;
-    padding: 20px;
-    position: relative;
-    right: 200px;
+    padding: 10px;
+    position: relative; /* Tetap gunakan posisi relatif pada container */
+    right: 250px; /* Hilangkan offset yang tidak perlu */
+    top: 21px;
 }
 
 .login-box {
@@ -41,7 +42,7 @@
 .login-label {
     display: block;
     text-align: left;
-    margin: 15px 0 5px;
+    margin: 1px 0;
     font-size: 14px;
     color: #333;
 }
@@ -50,7 +51,7 @@ input[type="text"],
 input[type="password"] {
     width: 100%;
     padding: 12px;
-    margin-bottom: 10px;
+    margin: 1px 0 10px;
     border: 1px solid #ccc;
     border-radius: 4px;
     font-size: 14px;
@@ -96,9 +97,86 @@ input[type="password"] {
     text-decoration: none;
 }
 
-.ilustrasi img {
-    height: 500px;
-    background-color: red;
-    position: relative;
-    left: 500px;
+.login-illustration {
+    position: absolute;
+    top: 155px; /* Jaga posisi atas ilustrasi */
+    left: 500px;  /* Jaga jarak kiri ilustrasi */
+    display: block; /* Pastikan elemen tetap tampil */
+}
+
+.login-illustration img {
+    width: 530px;
+    height: auto;
+}
+
+/* Tablet */
+@media screen and (max-width: 768px) {
+    .login-all {
+        background-image: linear-gradient(to right, #ffffff 0%, #ffffff 70%, #F9BB19 50%, #F9BB19 100%);
+    }
+
+    .login-container {
+        right: 0; /* Hilangkan posisi offset */
+        padding: 10px;
+    }
+
+    .login-box {
+        padding: 30px;
+    }
+
+    .login-logo img {
+        width: 80px; /* Ukuran lebih kecil */
+    }
+
+    .login-h2-sign {
+        font-size: 20px; /* Font lebih kecil */
+    }
+
+    input[type="text"],
+    input[type="password"] {
+        font-size: 14px; /* Font lebih kecil */
+    }
+
+    .login-button-sign-in {
+        font-size: 14px; /* Font lebih kecil */
+        padding: 10px;
+    }
+
+    .login-illustration {
+        display: none;
+    }
+}
+
+/* Mobile */
+@media (max-width: 320px) {
+    .login-container {
+        max-width: 100%; /* Penuhi lebar layar */
+        padding: 10px;
+    }
+
+    .login-box {
+        padding: 20px; /* Kurangi padding */
+    }
+
+    .login-logo img {
+        width: 60px; /* Lebih kecil lagi */
+    }
+
+    .login-h2-sign {
+        font-size: 18px; /* Ukuran lebih kecil */
+    }
+
+    input[type="text"],
+    input[type="password"] {
+        font-size: 12px; /* Font lebih kecil */
+    }
+
+    .login-button-sign-in {
+        font-size: 12px;
+        padding: 8px;
+    }
+
+    .login-illustration {
+        display: none;
+    }
 }

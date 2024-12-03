@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import './Schedule.css'; // Path CSS
-import logo from '../assets/images/Logo_bplj.png';
-import illustration from '../assets/images/ilustrasi_kalender.png';
+import './Schedule.css';
+import Sidebar from '../components/Sidebar';
 
 function Schedule() {
   const [meetings, setMeetings] = useState([]);
@@ -51,13 +50,11 @@ function Schedule() {
           setMeetings(result);
         } else {
           const error = await response.json();
-          console.log('Failed to fetch meetings:', error.message);
-          setError('Failed to fetch meetings');
+          setError('Failed to fetch meetings: ' + error.message);
         }
-        setLoading(false);
       } catch (err) {
-        console.error('Error fetching meetings:', err);
-        setError('Failed to fetch meetings');
+        setError('Failed to fetch meetings: ' + err.message);
+      } finally {
         setLoading(false);
       }
     };
@@ -65,10 +62,6 @@ function Schedule() {
     fetchMeetings();
   }, []);
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>{error}</div>;
-
-  // Fungsi untuk memfilter rapat
   const filterMeetings = (type) => {
     const today = new Date();
     const offset = 7 * 60 * 60 * 1000; // GMT+7 offset
@@ -89,23 +82,14 @@ function Schedule() {
     return [];
   };
 
+  if (loading) return <div className="loading">Loading...</div>;
+  if (error) return <div className="error">{error}</div>;
+
   return (
     <div className="sch-all">
       <div className="sch-container">
-        <aside className="sch-sidebar">
-          <div className="sch-center">
-            <img src={logo} alt="Logo" className="sch-logo" />
-          </div>
-          <h2>JADWAL RAPAT</h2>
-          <nav className="sch-menu">
-            <a href="/dashboard" className="sch-menu-item">🏠 Dashboard</a>
-            <a href="/input-meeting" className="sch-menu-item">📅 Input Meeting</a>
-            <a href="#" className="sch-menu-item active">📆 Schedule</a>
-          </nav>
-          <div className="sch-illustration">
-            <img src={illustration} alt="Illustration" />
-          </div>
-        </aside>
+        {/* Sidebar */}
+        <Sidebar activePage="schedule" />
 
         <main className="sch-main-content">
           <h1>Schedule</h1>

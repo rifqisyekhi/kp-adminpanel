@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import './Lobby.css'; // Include the path to your CSS
+import './Lobby.css';
 import logoInstagram from '../assets/images/IG.png';
 import logoYouTube from '../assets/images/YT.png';
 import logoTikTok from '../assets/images/Tiktok.png';

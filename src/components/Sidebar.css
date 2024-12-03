@@ -1,0 +1,108 @@
+/* Sidebar Styles */
+.sb-sidebar {
+  position: fixed; /* Sidebar tetap di posisi tetap */
+  top: 0; /* Di bagian atas */
+  left: 0; /* Di sisi kiri */
+  background-color: #ffffff;
+  padding: 20px;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  width: 250px; /* Lebar sidebar untuk layar besar */
+  height: 100vh; /* Menutupi tinggi layar */
+  z-index: 1000;
+  overflow-y: auto; /* Menambah scroll jika konten lebih banyak */
+}
+
+/* Logo */
+.sb-center {
+  display: flex;
+  justify-content: center;
+}
+
+.sb-logo {
+  width: 80px;
+  height: auto;
+  margin-bottom: 10px;
+}
+
+/* Sidebar Header */
+.sb-sidebar h2 {
+  color: #1b1e34;
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 30px;
+}
+
+/* Menu Styles */
+.sb-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.sb-menu-item {
+  font-size: 16px;
+  color: #1b1e34;
+  text-decoration: none;
+  padding: 10px;
+  border-radius: 5px;
+  transition: background-color 0.3s;
+  text-align: left;
+}
+
+.sb-menu-item:hover,
+.sb-menu-item.active {
+  background-color: #e0e0e0;
+}
+
+/* Illustration */
+.sb-illustration {
+  display: flex;
+  justify-content: center;
+}
+
+.sb-illustration img {
+  width: 60%;
+  margin-top: 130px;
+}
+
+/* Media Queries for Mobile Responsiveness */
+
+/* Tablet: max-width 768px */
+@media (max-width: 768px) {
+  .sb-sidebar {
+    width: 200px; /* Mengurangi lebar sidebar pada tablet */
+  }
+
+  .sb-menu-item {
+    font-size: 14px; /* Mengurangi ukuran font untuk tablet */
+  }
+
+  .sb-illustration img {
+    width: 50%; /* Mengurangi ukuran gambar untuk tablet */
+  }
+}
+
+/* Mobile: max-width 480px */
+@media (max-width: 480px) {
+  .sb-sidebar {
+    width: 100%; /* Sidebar mengisi 100% layar pada mobile */
+    height: auto; /* Sidebar tidak perlu mencapai 100vh */
+    position: relative; /* Mengubah posisi menjadi relatif pada mobile */
+    padding: 10px; /* Mengurangi padding pada mobile */
+  }
+
+  .sb-menu {
+    display: block; /* Menampilkan menu secara vertikal */
+  }
+
+  .sb-menu-item {
+    font-size: 14px; /* Menyesuaikan ukuran font untuk mobile */
+    padding: 8px; /* Mengurangi padding item menu */
+  }
+
+  .sb-illustration img {
+    width: 100%; /* Membuat gambar mengisi 100% lebar pada mobile */
+    margin-top: 50px; /* Menyesuaikan margin atas untuk mobile */
+  }
+}

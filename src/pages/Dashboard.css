@@ -1,6 +1,5 @@
-/* Basic Reset */
-/* Body Styling */
-.body {
+/* General Styles */
+.db-body {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -8,36 +7,31 @@
     background-color: #ffffff;
 }
 
-/* Dashboard Container */
-.dashboard {
+.db-dashboard {
     text-align: center;
 }
 
-/* Logo Styling */
-.logo {
+.db-logo {
     font-size: 48px;
     font-weight: bold;
     color: #1b1e34;
     margin-bottom: 10px;
 }
 
-/* Welcome Text */
-.welcome-text {
+.db-welcome-text {
     font-size: 24px;
     color: #1b1e34;
     margin-bottom: 30px;
 }
 
-/* Button Container */
-.buttons {
+.db-buttons {
     display: flex;
     gap: 20px;
     justify-content: center;
     margin-top: 20px;
 }
 
-/* Button Styling */
-.button {
+.db-button {
     background-color: #F8B400;
     color: white;
     font-size: 18px;
@@ -45,19 +39,20 @@
     border: none;
     border-radius: 10px;
     cursor: pointer;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     display: flex;
     align-items: center;
     gap: 10px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Add shadow here */
 }
 
-/* Icon Style in Button */
-.button .icon {
-    font-size: 20px;
+.db-button:hover {
+    background-color: #d49a00;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2); /* Darker shadow on hover */
 }
 
-/* Sign Out Button */
-.sign-out {
+.db-sign-out {
     position: absolute;
     bottom: 20px;
     right: 20px;
@@ -66,8 +61,78 @@
     font-size: 14px;
     padding: 10px 20px;
     border-radius: 8px;
-    text-decoration: none;
     display: inline-flex;
     align-items: center;
     gap: 5px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Add shadow here */
+}
+
+.db-sign-out:hover {
+    background-color: #14162b;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2); /* Darker shadow on hover */
+}
+
+/* Responsive Styling */
+/* Tablet */
+@media (max-width: 768px) {
+    .db-body {
+        padding: 10px;
+    }
+
+    .db-logo {
+        font-size: 40px;
+    }
+
+    .db-welcome-text {
+        font-size: 20px;
+        margin-bottom: 20px;
+    }
+
+    .db-buttons {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .db-button {
+        font-size: 16px;
+        padding: 12px 20px;
+    }
+
+    .db-sign-out {
+        font-size: 12px;
+        padding: 8px 15px;
+    }
+}
+
+/* Mobile */
+@media (max-width: 320px) {
+    .db-body {
+        padding: 5px;
+    }
+
+    .db-logo {
+        font-size: 30px;
+    }
+
+    .db-welcome-text {
+        font-size: 16px;
+        margin-bottom: 15px;
+    }
+
+    .db-buttons {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .db-button {
+        font-size: 14px;
+        padding: 10px 15px;
+    }
+
+    .db-sign-out {
+        font-size: 10px;
+        padding: 6px 10px;
+    }
 }
