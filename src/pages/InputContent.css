@@ -2,7 +2,7 @@
 .input-content {
   display: flex;
   height: 100vh;
-  gap: 20px;  /* Menambahkan jarak antar elemen */
+  gap: 20px; /* Menambahkan jarak antar elemen */
 }
 
 /* Untuk kontainer utama yang berisi sidebar dan konten utama */
@@ -23,7 +23,7 @@
   padding: 20px;
   background-color: #f7f9fc;
   overflow-y: auto;
-  margin-left: 250px;  /* Memberikan margin kiri untuk menghindari tumpang tindih dengan sidebar */
+  margin-left: 250px; /* Memberikan margin kiri untuk menghindari tumpang tindih dengan sidebar */
 }
 
 /* Header utama */
@@ -78,4 +78,81 @@ form button {
 
 form button:hover {
   background-color: #333;
+}
+
+/* Table Container */
+section {
+  margin-top: 20px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  font-size: 16px;
+  text-align: left;
+}
+
+thead {
+  background-color: #f4f4f4;
+}
+
+thead th {
+  padding: 12px;
+  border-bottom: 2px solid #ccc;
+}
+
+tbody tr:nth-child(odd) {
+  background-color: #f9f9f9;
+}
+
+tbody tr:nth-child(even) {
+  background-color: #fff;
+}
+
+td,
+th {
+  padding: 10px;
+  border: 1px solid #ddd;
+}
+
+th {
+  font-weight: bold;
+  color: #333;
+}
+
+td img {
+  max-width: 80px;
+  max-height: 80px;
+  object-fit: cover;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+tbody tr:hover {
+  background-color: #f1f1f1;
+  transition: background-color 0.3s;
+}
+
+/* Button (Optional for Future Action Columns) */
+button {
+  padding: 6px 12px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+textarea {
+  padding: 10px;
+  font-size: 16px;
+  line-height: 1.5; /* Untuk jarak antar baris */
+  resize: vertical; /* Agar pengguna bisa mengubah tinggi */
+  white-space: pre-wrap; /* Supaya baris baru ditampilkan */
 }

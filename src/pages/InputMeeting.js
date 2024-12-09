@@ -1,15 +1,15 @@
-import React, { useEffect, useState } from 'react';
-import './InputMeeting.css';
-import Sidebar from '../components/Sidebar';
+import React, { useEffect, useState } from "react";
+import "./InputMeeting.css";
+import Sidebar from "../components/Sidebar";
 
 function InputMeeting() {
-  const [location, setLocation] = useState('');
-  const [audience, setAudience] = useState('');
-  const [meetingTitle, setMeetingTitle] = useState('');
-  const [date, setDate] = useState('');
-  const [startTime, setStartTime] = useState('');
-  const [endTime, setEndTime] = useState('');
-  const [description, setDescription] = useState('');
+  const [location, setLocation] = useState("");
+  const [audience, setAudience] = useState("");
+  const [meetingTitle, setMeetingTitle] = useState("");
+  const [date, setDate] = useState("");
+  const [startTime, setStartTime] = useState("");
+  const [endTime, setEndTime] = useState("");
+  const [description, setDescription] = useState("");
   const [rooms, setRooms] = useState([]);
   const [audiences, setAudiences] = useState([]); // State untuk daftar audiens
 
@@ -17,11 +17,11 @@ function InputMeeting() {
     // Fetch daftar rooms
     const fetchRooms = async () => {
       try {
-        const response = await fetch('http://localhost:5000/rooms', {
-          method: 'GET',
+        const response = await fetch(`${process.env.REACT_APP_API_URL}/rooms`, {
+          method: "GET",
           headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
         });
 
@@ -30,33 +30,36 @@ function InputMeeting() {
           setRooms(result);
         } else {
           const error = await response.json();
-          console.error('Failed to fetch rooms: ' + error.message);
+          console.error("Failed to fetch rooms: " + error.message);
         }
       } catch (error) {
-        console.error('Error fetching rooms:', error);
+        console.error("Error fetching rooms:", error);
       }
     };
 
     // Fetch daftar audiens
     const fetchAudiences = async () => {
       try {
-        const response = await fetch('http://localhost:5000/audiences', {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-          },
-        });
+        const response = await fetch(
+          `${process.env.REACT_APP_API_URL}/audiences`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
 
         if (response.ok) {
           const result = await response.json();
           setAudiences(result);
         } else {
           const error = await response.json();
-          console.error('Failed to fetch audiences: ' + error.message);
+          console.error("Failed to fetch audiences: " + error.message);
         }
       } catch (error) {
-        console.error('Error fetching audiences:', error);
+        console.error("Error fetching audiences:", error);
       }
     };
 
@@ -78,26 +81,29 @@ function InputMeeting() {
     };
 
     try {
-      const response = await fetch('http://localhost:5000/meetings', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
-        },
-        body: JSON.stringify(newMeeting),
-      });
+      const response = await fetch(
+        `${process.env.REACT_APP_API_URL}/meetings`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+          body: JSON.stringify(newMeeting),
+        }
+      );
 
       if (response.ok) {
         const result = await response.json();
-        alert('Meeting created successfully');
-        window.location.href = '/schedule';
+        alert("Meeting created successfully");
+        window.location.href = "/schedule";
       } else {
         const error = await response.json();
-        alert('Failed to create meeting: ' + error.message);
+        alert("Failed to create meeting: " + error.message);
       }
     } catch (error) {
-      console.error('Error creating meeting:', error);
-      alert('An error occurred while creating the meeting.');
+      console.error("Error creating meeting:", error);
+      alert("An error occurred while creating the meeting.");
     }
   };
 

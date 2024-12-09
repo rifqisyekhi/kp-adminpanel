@@ -1,41 +1,134 @@
-import React, { useState } from 'react';
-import Sidebar from '../components/Sidebar'; // Import Sidebar
-import './InputContent.css'; // Path CSS untuk halaman ini
+import React, { useState, useEffect } from "react";
+import Sidebar from "../components/Sidebar"; // Import Sidebar
+import "./InputContent.css"; // Path CSS untuk halaman ini
+import axios from "axios";
 
 function InputContent() {
-  const [content, setContent] = useState({
-    layanan: Array(10).fill(''), // Layanan Ada10
-    duratek: '',
-    advisTeknik: '',
+  const [formData, setFormData] = useState({
+    namaLayanan: "",
+    imageLayanan: null,
+    deskripsi: "",
+    standarAcuan: "",
+    biayaTarif: "",
+    produk: "",
   });
 
-  const handleInputChange = (event) => {
-    const { name, value } = event.target;
-    const [category, index] = name.split('-');
-    if (category === 'layanan') {
-      const updatedLayanan = [...content.layanan];
-      updatedLayanan[index] = value;
-      setContent({ ...content, layanan: updatedLayanan });
-    } else {
-      setContent({ ...content, [category]: value });
+  const [layananData, setLayananData] = useState([]); // State for table data
+  const [editId, setEditId] = useState(null); // State for editing
+
+  const handleInputChange = (e) => {
+    const { name, value, files } = e.target;
+
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: files ? files[0] : value, // Handle file inputs separately
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      const formDataToSend = new FormData();
+      formDataToSend.append("namaLayanan", formData.namaLayanan);
+      formDataToSend.append("imageLayanan", formData.imageLayanan);
+      formDataToSend.append("deskripsi", formData.deskripsi);
+      formDataToSend.append("standarAcuan", formData.standarAcuan);
+      formDataToSend.append("biayaTarif", formData.biayaTarif);
+      formDataToSend.append("produk", formData.produk);
+
+      if (editId) {
+        // Edit existing data
+        await axios.put(
+          `${process.env.REACT_APP_API_URL}/layanan/${editId}`,
+          formDataToSend,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
+        alert("Data successfully updated!");
+        setEditId(null);
+      } else {
+        // Add new data
+        await axios.post(
+          `${process.env.REACT_APP_API_URL}/layanan`,
+          formDataToSend,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
+        alert("Data successfully submitted!");
+      }
+
+      setFormData({
+        namaLayanan: "",
+        imageLayanan: null,
+        deskripsi: "",
+        standarAcuan: "",
+        biayaTarif: "",
+        produk: "",
+      });
+      fetchLayananData(); // Refresh data
+    } catch (error) {
+      console.error("Error submitting the form:", error);
+      alert("An error occurred while submitting the form. Please try again.");
     }
   };
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-
-    // Validasi: Pastikan semua input terisi
-    const isLayananValid = content.layanan.every((value) => value.trim() !== '');
-    const isOtherValid =
-      content.duratek.trim() !== '' && content.advisTeknik.trim() !== '';
-    if (!isLayananValid || !isOtherValid) {
-      alert('Harap isi semua layanan dan konten sebelum submit.');
-      return;
+  const fetchLayananData = async () => {
+    try {
+      const response = await axios.get(
+        `${process.env.REACT_APP_API_URL}/layanan`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      setLayananData(response.data);
+    } catch (error) {
+      console.error("Error fetching layanan data:", error);
     }
-
-    console.log('Konten:', content);
-    alert('Konten berhasil disimpan!');
   };
+
+  const handleEdit = (layanan) => {
+    setEditId(layanan._id);
+    setFormData({
+      namaLayanan: layanan.namaLayanan,
+      imageLayanan: null, // Image cannot be prefilled
+      deskripsi: layanan.deskripsi,
+      standarAcuan: layanan.standarAcuan,
+      biayaTarif: layanan.biayaTarif,
+      produk: layanan.produk,
+    });
+  };
+
+  const handleDelete = async (id) => {
+    if (window.confirm("Are you sure you want to delete this item?")) {
+      try {
+        await axios.delete(`${process.env.REACT_APP_API_URL}/layanan/${id}`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+        alert("Data successfully deleted!");
+        fetchLayananData(); // Refresh data
+      } catch (error) {
+        console.error("Error deleting layanan data:", error);
+        alert("An error occurred while deleting the data.");
+      }
+    }
+  };
+
+  useEffect(() => {
+    fetchLayananData(); // Fetch data on component mount
+  }, []);
 
   return (
     <div className="input-content">
@@ -43,51 +136,133 @@ function InputContent() {
         <Sidebar activePage="input-content" />
 
         <main className="sch-main-content">
-          <h1>Input Konten</h1>
+          <h1>{editId ? "Edit Konten" : "Input Konten"}</h1>
           <form onSubmit={handleSubmit}>
             <section>
               <h2>Layanan</h2>
-              {content.layanan.map((layanan, index) => (
-                <div key={index} className="form-group">
-                  <label>Layanan {index + 1}</label>
-                  <textarea
-                    name={`layanan-${index}`}
-                    value={layanan}
-                    onChange={handleInputChange}
-                    placeholder={`Masukkan konten untuk Layanan ${index + 1}`}
-                  />
-                </div>
-              ))}
-            </section>
 
-            <section>
-              <h2>Duratek</h2>
               <div className="form-group">
-                <label>Konten Duratek</label>
-                <textarea
-                  name="duratek"
-                  value={content.duratek}
+                <label htmlFor="namaLayanan">Nama Layanan</label>
+                <input
+                  type="text"
+                  name="namaLayanan"
                   onChange={handleInputChange}
-                  placeholder="Masukkan konten untuk Duratek"
+                  value={formData.namaLayanan}
+                  placeholder="Masukkan nama layanan"
                 />
               </div>
-            </section>
 
-            <section>
-              <h2>Advis Teknik</h2>
               <div className="form-group">
-                <label>Konten Advis Teknik</label>
-                <textarea
-                  name="advisTeknik"
-                  value={content.advisTeknik}
+                <label htmlFor="imageLayanan">Image Layanan</label>
+                <input
+                  type="file"
+                  name="imageLayanan"
+                  accept="image/*"
                   onChange={handleInputChange}
-                  placeholder="Masukkan konten untuk Advis Teknik"
                 />
               </div>
-            </section>
 
-            <button type="submit">Submit</button>
+              <div className="form-group" style={{ marginTop: "20px" }}>
+                <label htmlFor="deskripsi">Deskripsi</label>
+                <textarea
+                  name="deskripsi"
+                  rows="5" // Menentukan tinggi awal
+                  onChange={handleInputChange}
+                  value={formData.deskripsi}
+                  placeholder="Masukkan deskripsi layanan"
+                  style={{ whiteSpace: "pre-wrap" }} // Menjaga enter di tampilan
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="standarAcuan">Standar Acuan</label>
+                <textarea
+                  name="standarAcuan"
+                  onChange={handleInputChange}
+                  value={formData.standarAcuan}
+                  placeholder="Masukkan standar acuan"
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="biayaTarif">Biaya Tarif</label>
+                <textarea
+                  name="biayaTarif"
+                  onChange={handleInputChange}
+                  value={formData.biayaTarif}
+                  placeholder="Masukkan biaya tarif"
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="produk">Produk</label>
+                <textarea
+                  name="produk"
+                  onChange={handleInputChange}
+                  value={formData.produk}
+                  placeholder="Masukkan produk terkait layanan"
+                />
+              </div>
+
+              <div style={{ marginTop: "20px" }}>
+                <button type="submit">{editId ? "Update" : "Submit"}</button>
+              </div>
+            </section>
           </form>
+
+          <section style={{ marginTop: "40px" }}>
+            <h2>Layanan Pengujian</h2>
+            <table>
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Foto Layanan</th>
+                  <th>Nama Layanan</th>
+                  <th>Deskripsi</th>
+                  <th>Standar Acuan</th>
+                  <th>Biaya Tarif</th>
+                  <th>Produk</th>
+                  <th>Aksi</th>
+                </tr>
+              </thead>
+              <tbody>
+                {layananData.map((layanan, index) => (
+                  <tr key={layanan._id}>
+                    <td>{index + 1}</td>
+                    <td>
+                      <img
+                        src={`${process.env.REACT_APP_API_URL}/${layanan.imageLayanan}`}
+                        alt="Layanan"
+                        width="50"
+                      />
+                    </td>
+                    <td>{layanan.namaLayanan}</td>
+                    <td>{layanan.deskripsi}</td>
+                    <td>{layanan.standarAcuan}</td>
+                    <td>{layanan.biayaTarif}</td>
+                    <td>{layanan.produk}</td>
+                    <td>
+                      <button onClick={() => handleEdit(layanan)}>Edit</button>
+                      <button
+                        onClick={() => handleDelete(layanan._id)}
+                        style={{ marginLeft: "10px", backgroundColor: "red" }}
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+
+                {layananData.length === 0 && (
+                  <tr>
+                    <td colSpan="7" style={{ textAlign: "center" }}>
+                      Belum ada data layanan pengujian
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </section>
         </main>
       </div>
     </div>
