@@ -2,7 +2,6 @@ import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Dashboard from "./pages/Dashboard";
 import InputMeeting from "./pages/InputMeeting";
-import Lobby from "./pages/Lobby";
 import Login from "./pages/Login";
 import Schedule from "./pages/Schedule";
 import InputContent from "./pages/InputContent";
@@ -45,14 +44,6 @@ function App() {
           element={
             <PrivateRoute>
               <Schedule />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/lobby"
-          element={
-            <PrivateRoute>
-              <Lobby />
             </PrivateRoute>
           }
         />

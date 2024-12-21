@@ -22,6 +22,11 @@ function Schedule() {
           }
         );
 
+        if(response.status === 401 || response.status === 403){
+          localStorage.removeItem('token');
+          window.location.href = "/login";
+        }
+
         if (response.ok) {
           // Hapus dari state jika berhasil dihapus dari backend
           setMeetings(meetings.filter((meeting) => meeting._id !== id));

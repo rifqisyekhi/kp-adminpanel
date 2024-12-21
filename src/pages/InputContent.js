@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import Sidebar from "../components/Sidebar"; // Import Sidebar
 import "./InputContent.css"; // Path CSS untuk halaman ini
 import axios from "axios";
+import { BtnBold, BtnItalic, Editor, EditorProvider, Toolbar } from "react-simple-wysiwyg";
+import CustomEditor from "../components/CustomEditor";
 
 function InputContent() {
   const [formData, setFormData] = useState({
@@ -15,6 +17,12 @@ function InputContent() {
 
   const [layananData, setLayananData] = useState([]); // State for table data
   const [editId, setEditId] = useState(null); // State for editing
+
+  const [content, setContent] = useState(''); // State to manage editor content
+  const [standarAcuan, setStandarAcuan] = useState('');
+  const [biayaTarif, setBiayaTarif] = useState('');
+  const [produk, setProduk] = useState('');
+
 
   const handleInputChange = (e) => {
     const { name, value, files } = e.target;
@@ -32,14 +40,14 @@ function InputContent() {
       const formDataToSend = new FormData();
       formDataToSend.append("namaLayanan", formData.namaLayanan);
       formDataToSend.append("imageLayanan", formData.imageLayanan);
-      formDataToSend.append("deskripsi", formData.deskripsi);
-      formDataToSend.append("standarAcuan", formData.standarAcuan);
-      formDataToSend.append("biayaTarif", formData.biayaTarif);
-      formDataToSend.append("produk", formData.produk);
+      formDataToSend.append("deskripsi", content);
+      formDataToSend.append("standarAcuan", standarAcuan);
+      formDataToSend.append("biayaTarif", biayaTarif);
+      formDataToSend.append("produk", produk);
 
       if (editId) {
         // Edit existing data
-        await axios.put(
+        const response = await axios.put(
           `${process.env.REACT_APP_API_URL}/layanan/${editId}`,
           formDataToSend,
           {
@@ -49,6 +57,11 @@ function InputContent() {
             },
           }
         );
+
+        if(response.status === 401 || response.status === 403){
+          localStorage.removeItem('token');
+          window.location.href = "/login";
+        }
         alert("Data successfully updated!");
         setEditId(null);
       } else {
@@ -99,13 +112,17 @@ function InputContent() {
 
   const handleEdit = (layanan) => {
     setEditId(layanan._id);
+    setContent(layanan.deskripsi)
+    setBiayaTarif(layanan.biayaTarif)
+    setStandarAcuan(layanan.standarAcuan)
+    setProduk(layanan.produk)
     setFormData({
       namaLayanan: layanan.namaLayanan,
       imageLayanan: null, // Image cannot be prefilled
-      deskripsi: layanan.deskripsi,
-      standarAcuan: layanan.standarAcuan,
-      biayaTarif: layanan.biayaTarif,
-      produk: layanan.produk,
+      deskripsi: content,
+      standarAcuan: standarAcuan,
+      biayaTarif: biayaTarif,
+      produk: produk,
     });
   };
 
@@ -129,6 +146,23 @@ function InputContent() {
   useEffect(() => {
     fetchLayananData(); // Fetch data on component mount
   }, []);
+
+  
+  const handleOnChange = (e) => {
+    setContent(e.target.value); // Update the content state
+  };
+
+  const handleOnChangeStandar = (e) => {
+    setStandarAcuan(e.target.value); // Update the content state
+  };
+
+  const handleOnChangeBiaya = (e) => {
+    setBiayaTarif(e.target.value); // Update the content state
+  };
+
+  const handleOnChangeProduk = (e) => {
+    setProduk(e.target.value); // Update the content state
+  };
 
   return (
     <div className="input-content">
@@ -163,45 +197,23 @@ function InputContent() {
               </div>
 
               <div className="form-group" style={{ marginTop: "20px" }}>
-                <label htmlFor="deskripsi">Deskripsi</label>
-                <textarea
-                  name="deskripsi"
-                  rows="5" // Menentukan tinggi awal
-                  onChange={handleInputChange}
-                  value={formData.deskripsi}
-                  placeholder="Masukkan deskripsi layanan"
-                  style={{ whiteSpace: "pre-wrap" }} // Menjaga enter di tampilan
-                />
+                <label>Deskripsi</label>
+                <CustomEditor value={content} onChange={handleOnChange}/>
               </div>
 
               <div className="form-group">
-                <label htmlFor="standarAcuan">Standar Acuan</label>
-                <textarea
-                  name="standarAcuan"
-                  onChange={handleInputChange}
-                  value={formData.standarAcuan}
-                  placeholder="Masukkan standar acuan"
-                />
+                <label>Standar Acuan</label>
+                <CustomEditor value={standarAcuan} onChange={handleOnChangeStandar}/>
               </div>
 
               <div className="form-group">
-                <label htmlFor="biayaTarif">Biaya Tarif</label>
-                <textarea
-                  name="biayaTarif"
-                  onChange={handleInputChange}
-                  value={formData.biayaTarif}
-                  placeholder="Masukkan biaya tarif"
-                />
+                <label>Biaya Tarif</label>
+                <CustomEditor value={biayaTarif} onChange={handleOnChangeBiaya}/>
               </div>
 
               <div className="form-group">
                 <label htmlFor="produk">Produk</label>
-                <textarea
-                  name="produk"
-                  onChange={handleInputChange}
-                  value={formData.produk}
-                  placeholder="Masukkan produk terkait layanan"
-                />
+                <CustomEditor value={produk} onChange={handleOnChangeProduk}/>
               </div>
 
               <div style={{ marginTop: "20px" }}>
@@ -237,10 +249,10 @@ function InputContent() {
                       />
                     </td>
                     <td>{layanan.namaLayanan}</td>
-                    <td>{layanan.deskripsi}</td>
-                    <td>{layanan.standarAcuan}</td>
-                    <td>{layanan.biayaTarif}</td>
-                    <td>{layanan.produk}</td>
+                    <td><div dangerouslySetInnerHTML={{__html: layanan.deskripsi}}/></td>
+                    <td><div dangerouslySetInnerHTML={{__html: layanan.standarAcuan}}/></td>
+                    <td><div dangerouslySetInnerHTML={{__html: layanan.biayaTarif}}/></td>
+                    <td><div dangerouslySetInnerHTML={{__html: layanan.produk}}/></td>
                     <td>
                       <button onClick={() => handleEdit(layanan)}>Edit</button>
                       <button

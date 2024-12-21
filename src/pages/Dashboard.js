@@ -21,6 +21,11 @@ function Dashboard() {
           },
         });
 
+        if(response.status === 401 || response.status === 403){
+          localStorage.removeItem('token');
+          window.location.href = "/login";
+        }
+
         if (response.status === 401) {
           window.location.href = "/login"; // Redirect to login if unauthorized
         } else if (!response.ok) {

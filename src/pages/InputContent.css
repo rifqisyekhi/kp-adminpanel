@@ -148,11 +148,3 @@ button {
 button:hover {
   background-color: #0056b3;
 }
-
-textarea {
-  padding: 10px;
-  font-size: 16px;
-  line-height: 1.5; /* Untuk jarak antar baris */
-  resize: vertical; /* Agar pengguna bisa mengubah tinggi */
-  white-space: pre-wrap; /* Supaya baris baru ditampilkan */
-}

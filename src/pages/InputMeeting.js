@@ -25,6 +25,11 @@ function InputMeeting() {
           },
         });
 
+        if(response.status === 401 || response.status === 403){
+          localStorage.removeItem('token');
+          window.location.href = "/login";
+        }
+
         if (response.ok) {
           const result = await response.json();
           setRooms(result);
