@@ -4,6 +4,7 @@ import "./Login.css";
 import logo from "../assets/images/Logo_bplj.png";
 import { useNavigate } from "react-router-dom";
 import illustration1 from "../assets/images/Ilustrasi.png";
+import { isStillAuthorized, login } from "../libs/user";
 
 export default function Login() {
   const [username, setUsername] = useState("");
@@ -11,65 +12,28 @@ export default function Login() {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const check = async () => {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/test`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`, // Add token if needed for authentication
-        },
-      });
-
-      if (response.status === 200) {
-        window.location.href = "/dashboard";
-      }
-    };
-
-    check();
-  }, []);
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Ensure username and password are not empty
     if (!username || !password) {
       setError("Username and password are required.");
       return;
     }
 
     try {
-      const response = await axios.post(
-        `${process.env.REACT_APP_API_URL}/login`,
-        {
-          username,
-          password,
-        }
-      );
+      const response = await login(username, password);
 
-      if (response?.data?.token) {
-        // Save the token securely (sessionStorage or localStorage)
-        localStorage.setItem("token", response.data.token);
-        // Redirect to the dashboard
-        if (navigate) {
-          navigate("/dashboard");
-        } else {
-          window.location.href = "/dashboard"; // Fallback navigation
-        }
+      if (response.success) {
+        window.location.href = "/dashboard";
       } else {
-        throw new Error("Invalid response from server.");
+        if (response.status == 404) {
+          setError("Invalid username or password");
+        } else {
+          setError("Error something went wrong");
+        }
       }
     } catch (err) {
-      if (err.response && err.response.status === 401) {
-        setError("Invalid username or password");
-      } else if (err.response) {
-        setError(
-          `Error: ${err.response.data.message || "Something went wrong"}`
-        );
-      } else {
-        setError("Network error. Please try again later.");
-      }
-      console.error("Login error:", err);
+      setError("Server error. Please try again later.");
     }
   };
 

@@ -1,36 +1,62 @@
 import React, { useEffect, useState } from "react";
 import "./Schedule.css";
 import Sidebar from "../components/Sidebar";
+import { deleteMeetingById, getAllMeeting } from "../libs/meeting";
 
 function Schedule() {
   const [meetings, setMeetings] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [todayMeetings, setTodayMeetings] = useState([]);
+  const [upcomingMeetings, setUpcomingMeetings] = useState([]);
+
+  const fetchMeetings = async () => {
+    try {
+      const response = await getAllMeeting();
+
+      if (response.success) {
+        const result = response.data;
+        setMeetings(result);
+
+        const today = new Date();
+        const offset = 7 * 60 * 60 * 1000; // GMT+7 offset
+        const gmt7Today = new Date(today.getTime() + offset);
+        gmt7Today.setUTCHours(0, 0, 0, 0);
+
+        const todayFiltered = result.filter((meeting) => {
+          const meetingDate = new Date(meeting.tanggal);
+          return (
+            meetingDate.toISOString().slice(0, 10) ===
+            gmt7Today.toISOString().slice(0, 10)
+          );
+        });
+
+        const upcomingFiltered = result.filter((meeting) => {
+          const meetingDate = new Date(meeting.tanggal);
+          return meetingDate > gmt7Today;
+        });
+
+        setTodayMeetings(todayFiltered);
+        setUpcomingMeetings(upcomingFiltered);
+      }
+    } catch (err) {
+      alert("Failed to fetch meetings: " + err.message);
+    }
+  };
+
+  // Fetch data rapat dari API
+  useEffect(() => {
+    fetchMeetings();
+  }, []);
 
   // Fungsi untuk menghapus meeting
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this meeting?")) {
       try {
-        const response = await fetch(
-          `${process.env.REACT_APP_API_URL}/meetings/${id}`,
-          {
-            method: "DELETE",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          }
-        );
+        const response = await deleteMeetingById(id);
 
-        if(response.status === 401 || response.status === 403){
-          localStorage.removeItem('token');
-          window.location.href = "/login";
-        }
-
-        if (response.ok) {
-          // Hapus dari state jika berhasil dihapus dari backend
-          setMeetings(meetings.filter((meeting) => meeting._id !== id));
+        if (response.success) {
+          setMeetings(meetings.filter((meeting) => meeting.id !== id));
           alert("Meeting successfully deleted.");
+          fetchMeetings();
         } else {
           alert("Failed to delete the meeting. Please try again.");
         }
@@ -41,64 +67,6 @@ function Schedule() {
     }
   };
 
-  // Fetch data rapat dari API
-  useEffect(() => {
-    const fetchMeetings = async () => {
-      try {
-        const response = await fetch(
-          `${process.env.REACT_APP_API_URL}/meetings`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          }
-        );
-
-        if (response.ok) {
-          const result = await response.json();
-          setMeetings(result);
-        } else {
-          const error = await response.json();
-          setError("Failed to fetch meetings: " + error.message);
-        }
-      } catch (err) {
-        setError("Failed to fetch meetings: " + err.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchMeetings();
-  }, []);
-
-  const filterMeetings = (type) => {
-    const today = new Date();
-    const offset = 7 * 60 * 60 * 1000; // GMT+7 offset
-    const gmt7Today = new Date(today.getTime() + offset);
-    gmt7Today.setUTCHours(0, 0, 0, 0);
-
-    if (type === "today") {
-      return meetings.filter((meeting) => {
-        const meetingDate = new Date(meeting.tanggal);
-        return (
-          meetingDate.toISOString().slice(0, 10) ===
-          gmt7Today.toISOString().slice(0, 10)
-        );
-      });
-    } else if (type === "upcoming") {
-      return meetings.filter((meeting) => {
-        const meetingDate = new Date(meeting.tanggal);
-        return meetingDate > gmt7Today;
-      });
-    }
-    return [];
-  };
-
-  if (loading) return <div className="loading">Loading...</div>;
-  if (error) return <div className="error">{error}</div>;
-
   return (
     <div className="sch-all">
       <div className="sch-container">
@@ -107,58 +75,20 @@ function Schedule() {
 
         <main className="sch-main-content">
           <h1>Schedule</h1>
-          {meetings.length > 0 ? (
+          {meetings.length > 0 || upcomingMeetings.length > 0 ? (
             <section className="sch-meeting-info">
               {/* Rapat Hari Ini */}
-              <div className="sch-today">
-                <h2>RAPAT HARI INI</h2>
-                {filterMeetings("today").map((meeting) => (
-                  <div key={meeting._id} className="sch-meeting-card">
-                    <p>{meeting.judul}</p>
-                    <div className="sch-status">
-                      <span className="sch-dot"></span>{" "}
-                      {meeting.status || "Sedang Berlangsung"}
-                    </div>
-                    <div className="sch-details">
-                      <p>
-                        <strong>Waktu:</strong> {meeting.start_time} -{" "}
-                        {meeting.end_time}
-                      </p>
-                      <p>
-                        <strong>Tempat:</strong> {meeting.tempat}
-                      </p>
-                      <p>
-                        <strong>Audience:</strong> {meeting.audiens}
-                      </p>
-                    </div>
-                    <button
-                      className="sch-delete-btn"
-                      onClick={() => handleDelete(meeting._id)}
-                    >
-                      Delete
-                    </button>
-                  </div>
-                ))}
-              </div>
-
-              {/* Rapat Mendatang */}
-              <div className="sch-upcoming">
-                <h2>RAPAT MENDATANG</h2>
-                {filterMeetings("upcoming").map((meeting) => {
-                  const formattedDate = new Intl.DateTimeFormat("id-ID", {
-                    timeZone: "Asia/Bangkok",
-                    day: "2-digit",
-                    month: "2-digit",
-                    year: "numeric",
-                  }).format(new Date(meeting.tanggal));
-
-                  return (
-                    <div key={meeting._id} className="sch-meeting-card">
+              {todayMeetings.length > 0 && (
+                <div className="sch-today">
+                  <h2>RAPAT HARI INI</h2>
+                  {todayMeetings.map((meeting) => (
+                    <div key={meeting.id} className="sch-meeting-card">
                       <p>{meeting.judul}</p>
+                      <div className="sch-status">
+                        <span className="sch-dot"></span>{" "}
+                        {meeting.status || "Sedang Berlangsung"}
+                      </div>
                       <div className="sch-details">
-                        <p>
-                          <strong>Tanggal:</strong> {formattedDate}
-                        </p>
                         <p>
                           <strong>Waktu:</strong> {meeting.start_time} -{" "}
                           {meeting.end_time}
@@ -166,17 +96,59 @@ function Schedule() {
                         <p>
                           <strong>Tempat:</strong> {meeting.tempat}
                         </p>
+                        <p>
+                          <strong>Audience:</strong> {meeting.audiens}
+                        </p>
                       </div>
                       <button
                         className="sch-delete-btn"
-                        onClick={() => handleDelete(meeting._id)}
+                        onClick={() => handleDelete(meeting.id)}
                       >
                         Delete
                       </button>
                     </div>
-                  );
-                })}
-              </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Rapat Mendatang */}
+              {upcomingMeetings.length > 0 && (
+                <div className="sch-upcoming">
+                  <h2>RAPAT MENDATANG</h2>
+                  {upcomingMeetings.map((meeting) => {
+                    const formattedDate = new Intl.DateTimeFormat("id-ID", {
+                      timeZone: "Asia/Bangkok",
+                      day: "2-digit",
+                      month: "2-digit",
+                      year: "numeric",
+                    }).format(new Date(meeting.tanggal));
+
+                    return (
+                      <div key={meeting.id} className="sch-meeting-card">
+                        <p>{meeting.judul}</p>
+                        <div className="sch-details">
+                          <p>
+                            <strong>Tanggal:</strong> {formattedDate}
+                          </p>
+                          <p>
+                            <strong>Waktu:</strong> {meeting.start_time} -{" "}
+                            {meeting.end_time}
+                          </p>
+                          <p>
+                            <strong>Tempat:</strong> {meeting.tempat}
+                          </p>
+                        </div>
+                        <button
+                          className="sch-delete-btn"
+                          onClick={() => handleDelete(meeting.id)}
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
             </section>
           ) : (
             <p>No meetings scheduled.</p>

@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from "react";
 import "./InputMeeting.css";
 import Sidebar from "../components/Sidebar";
+import { getAllRoom } from "../libs/room";
+import { getAllAudience } from "../libs/audience";
+import { createMeeting } from "../libs/meeting";
 
 function InputMeeting() {
-  const [location, setLocation] = useState("");
+  const [location, setLocation] = useState({ index: "", id: null, name: "" });
   const [audience, setAudience] = useState("");
   const [meetingTitle, setMeetingTitle] = useState("");
   const [date, setDate] = useState("");
@@ -17,26 +20,8 @@ function InputMeeting() {
     // Fetch daftar rooms
     const fetchRooms = async () => {
       try {
-        const response = await fetch(`${process.env.REACT_APP_API_URL}/rooms`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        });
-
-        if(response.status === 401 || response.status === 403){
-          localStorage.removeItem('token');
-          window.location.href = "/login";
-        }
-
-        if (response.ok) {
-          const result = await response.json();
-          setRooms(result);
-        } else {
-          const error = await response.json();
-          console.error("Failed to fetch rooms: " + error.message);
-        }
+        const response = await getAllRoom();
+        setRooms(response.data || []);
       } catch (error) {
         console.error("Error fetching rooms:", error);
       }
@@ -45,24 +30,9 @@ function InputMeeting() {
     // Fetch daftar audiens
     const fetchAudiences = async () => {
       try {
-        const response = await fetch(
-          `${process.env.REACT_APP_API_URL}/audiences`,
-          {
-            method: "GET",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          }
-        );
+        const response = await getAllAudience();
 
-        if (response.ok) {
-          const result = await response.json();
-          setAudiences(result);
-        } else {
-          const error = await response.json();
-          console.error("Failed to fetch audiences: " + error.message);
-        }
+        setAudiences(response.data || []);
       } catch (error) {
         console.error("Error fetching audiences:", error);
       }
@@ -75,36 +45,34 @@ function InputMeeting() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const newMeeting = {
-      judul: meetingTitle,
-      tanggal: date,
-      tempat: location,
-      audiens: audience,
-      start_time: startTime,
-      end_time: endTime,
-      keterangan: description,
-    };
-
     try {
-      const response = await fetch(
-        `${process.env.REACT_APP_API_URL}/meetings`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-          body: JSON.stringify(newMeeting),
-        }
+      const response = await createMeeting(
+        meetingTitle,
+        date,
+        location.name,
+        audience,
+        startTime,
+        endTime,
+        description,
+        location.id
       );
 
-      if (response.ok) {
-        const result = await response.json();
+      console.log(
+        meetingTitle,
+        date,
+        location.name,
+        audience,
+        startTime,
+        endTime,
+        description,
+        location.id
+      );
+
+      if (response.success) {
         alert("Meeting created successfully");
         window.location.href = "/schedule";
       } else {
-        const error = await response.json();
-        alert("Failed to create meeting: " + error.message);
+        alert("Failed to create meeting: " + response.message);
       }
     } catch (error) {
       console.error("Error creating meeting:", error);
@@ -127,6 +95,7 @@ function InputMeeting() {
               placeholder="Rapat Kabinet"
               value={meetingTitle}
               onChange={(e) => setMeetingTitle(e.target.value)}
+              required
             />
 
             <label htmlFor="date">Tanggal</label>
@@ -135,18 +104,28 @@ function InputMeeting() {
               id="date"
               value={date}
               onChange={(e) => setDate(e.target.value)}
+              required
             />
 
             <label>Tempat</label>
             <select
-              value={location}
-              onChange={(e) => setLocation(e.target.value)}
+              value={location.index}
+              onChange={(e) => {
+                const selectedRoom = rooms[e.target.value];
+
+                setLocation({
+                  index: e.target.value,
+                  id: selectedRoom?.id || null,
+                  name: selectedRoom?.name || "",
+                });
+              }}
+              required
             >
               <option value="" disabled>
                 Pilih Tempat
               </option>
               {rooms.map((data, index) => (
-                <option key={index} value={data.name}>
+                <option key={index} value={index}>
                   {data.name}
                 </option>
               ))}
@@ -156,6 +135,7 @@ function InputMeeting() {
             <select
               value={audience}
               onChange={(e) => setAudience(e.target.value)}
+              required
             >
               <option value="" disabled>
                 Pilih Audiens
@@ -174,6 +154,7 @@ function InputMeeting() {
                 id="start-time"
                 value={startTime}
                 onChange={(e) => setStartTime(e.target.value)}
+                required
               />
               <label>End Time</label>
               <input
@@ -181,6 +162,7 @@ function InputMeeting() {
                 id="end-time"
                 value={endTime}
                 onChange={(e) => setEndTime(e.target.value)}
+                required
               />
             </div>
 
@@ -190,7 +172,8 @@ function InputMeeting() {
               placeholder="Tell us about your use case..."
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-            ></textarea>
+              required
+            />
 
             <button type="submit" className="im-submit-button">
               Submit ➔

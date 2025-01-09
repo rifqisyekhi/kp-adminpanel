@@ -1,7 +1,8 @@
-import React, { useEffect } from "react";
+import React from "react";
 import "./Dashboard.css"; // Include the path to your CSS
 import logo from "../assets/images/Logo_bplj.png"; // Adjust the path as needed
 import { useNavigate } from "react-router-dom";
+import { logout } from "../libs/user";
 
 function Dashboard() {
   const navigate = useNavigate();
@@ -10,41 +11,11 @@ function Dashboard() {
     navigate(path);
   };
 
-  useEffect(() => {
-    const fetchMeetings = async () => {
-      try {
-        const response = await fetch(`${process.env.REACT_APP_API_URL}/test`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`, // Add token if needed for authentication
-          },
-        });
-
-        if(response.status === 401 || response.status === 403){
-          localStorage.removeItem('token');
-          window.location.href = "/login";
-        }
-
-        if (response.status === 401) {
-          window.location.href = "/login"; // Redirect to login if unauthorized
-        } else if (!response.ok) {
-          console.error("Failed to fetch meetings:", response.status);
-          throw new Error("Failed to fetch meetings");
-        }
-      } catch (error) {
-        localStorage.removeItem("token");
-        console.error("Error fetching meetings:", error);
-        window.location.href = "/login"; // Redirect to login in case of error
-      }
-    };
-
-    fetchMeetings(); // Call the async function
-  }, []);
-
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    navigate("/");
+    const response = logout();
+    if (response) {
+      window.location.href = "/login";
+    }
   };
 
   return (
